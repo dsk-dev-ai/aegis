@@ -1,0 +1,18 @@
+[package]
+name = "veil-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Protocol types and session management for Veil"
+
+[dependencies]
+veil-crypto.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+rand.workspace = true
+rand_core.workspace = true
+base64.workspace = true

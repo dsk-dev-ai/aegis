@@ -1,0 +1,23 @@
+[package]
+name = "veil-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Veil relay server: minimal store-and-forward for opaque envelopes"
+
+[[bin]]
+name = "veil-server"
+path = "src/main.rs"
+
+[dependencies]
+veil-core.workspace = true
+axum.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+dashmap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true

@@ -1,0 +1,2 @@
+rust_input: crates/ffi/src/api.rs
+dart_output: apps/mobile/lib/src/bridge
