@@ -34,7 +34,7 @@ pub trait Session {
 }
 
 /// In-memory session registry keyed by peer device id. The persistent,
-/// encrypted implementation lives in `veil-storage`.
+/// encrypted implementation lives in `aegis-storage`.
 #[derive(Default)]
 pub struct SessionStore {
     sessions: HashMap<[u8; 16], Box<dyn Session>>,

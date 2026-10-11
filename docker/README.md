@@ -16,15 +16,15 @@ Build and run a minimal, hardened image (to be added):
 FROM rust:1.75-slim AS builder
 WORKDIR /app
 COPY . .
-RUN cargo build --release -p veil-server
+RUN cargo build --release -p aegis-server
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/target/release/veil-server /usr/local/bin/veil-server
+COPY --from=builder /app/target/release/aegis-server /usr/local/bin/aegis-server
 USER 1000:1000
 EXPOSE 8080
-ENV VEIL_RELAY_ADDR=0.0.0.0:8080
-ENTRYPOINT ["/usr/local/bin/veil-server"]
+ENV AEGIS_RELAY_ADDR=0.0.0.0:8080
+ENTRYPOINT ["/usr/local/bin/aegis-server"]
 ```
 
 Notes:

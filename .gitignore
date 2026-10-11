@@ -28,7 +28,7 @@ apps/**/lib/src/rust/frb_generated*.dart
 *.key
 *.pem
 /secrets/
-storage/
+/storage/
 
 # Editors / OS
 .idea/

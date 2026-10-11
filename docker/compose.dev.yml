@@ -1,4 +1,4 @@
-# Development compose for the Veil relay.
+# Development compose for the Aegis relay.
 # Use: docker compose -f docker/compose.dev.yml up
 version: "3.8"
 
@@ -6,11 +6,11 @@ services:
   relay:
     image: rust:1.75-alpine
     working_dir: /app
-    command: sh -c "cd /app && cargo run -p veil-server"
+    command: sh -c "cd /app && cargo run -p aegis-server"
     volumes:
       - ..:/app:rw
     ports:
       - "8080:8080"
     environment:
       - RUST_LOG=info
-      - VEIL_RELAY_ADDR=0.0.0.0:8080
+      - AEGIS_RELAY_ADDR=0.0.0.0:8080

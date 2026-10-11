@@ -4,7 +4,7 @@
 
 use crate::error::Result;
 use crate::transport::Transport;
-use veil_core::RelayEnvelope;
+use aegis_core::RelayEnvelope;
 
 #[derive(Debug, Clone)]
 pub struct ClientConfig {

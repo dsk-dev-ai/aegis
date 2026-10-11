@@ -1,8 +1,8 @@
-//! End-to-end demonstration of the Veil crypto primitives.
+//! End-to-end demonstration of the Aegis crypto primitives.
 //!
-//! Run with: `cargo run -p veil-crypto --example demo`
+//! Run with: `cargo run -p aegis-crypto --example demo`
 
-use veil_crypto::{
+use aegis_crypto::{
     decode_prekey_bundle, encode_prekey_bundle, kdf, safety_number, AeadKey, ExchangeKeyPair,
     IdentityKeyPair, PreKeyBundle,
 };
@@ -45,8 +45,9 @@ fn main() {
     let alice_secret = alice_ex.diffie_hellman(&bob_ex.public());
     let bob_secret = bob_ex.diffie_hellman(&alice_ex.public());
     let alice_key =
-        AeadKey::from_bytes(kdf::derive_key(&alice_secret, b"salt", b"veil-demo").unwrap());
-    let bob_key = AeadKey::from_bytes(kdf::derive_key(&bob_secret, b"salt", b"veil-demo").unwrap());
+        AeadKey::from_bytes(kdf::derive_key(&alice_secret, b"salt", b"aegis-demo").unwrap());
+    let bob_key =
+        AeadKey::from_bytes(kdf::derive_key(&bob_secret, b"salt", b"aegis-demo").unwrap());
     println!("Shared secrets agree: {}\n", alice_secret == bob_secret);
 
     // --- Alice encrypts a message; Bob decrypts it ---

@@ -1,6 +1,6 @@
 //! Account and device identity.
 //!
-//! Veil does not use phone numbers. A user is identified by a **username**
+//! Aegis does not use phone numbers. A user is identified by a **username**
 //! plus a **random per-account identifier**, and each device has its own
 //! key material. Devices are linked via a QR pairing flow.
 

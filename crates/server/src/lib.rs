@@ -1,4 +1,4 @@
-//! # veil-server
+//! # aegis-server
 //!
 //! A deliberately minimal relay. It performs **store-and-forward of opaque
 //! ciphertext** and nothing else:
@@ -13,6 +13,7 @@
 
 use std::sync::Arc;
 
+use aegis_core::RelayEnvelope;
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
@@ -24,7 +25,6 @@ use axum::{
 };
 use dashmap::DashMap;
 use serde::Serialize;
-use veil_core::RelayEnvelope;
 
 /// Shared, in-memory relay state. Replace with a durable, sharded store for
 /// production; the interface should stay the same.

@@ -1,5 +1,5 @@
 [package]
-name = "veil-ffi"
+name = "aegis-ffi"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -11,9 +11,9 @@ description = "Stable, UI-facing API surface exposed to the Flutter apps"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
-veil-crypto.workspace = true
-veil-core.workspace = true
-veil-storage.workspace = true
+aegis-crypto.workspace = true
+aegis-core.workspace = true
+aegis-storage.workspace = true
 thiserror.workspace = true
 rand.workspace = true
 serde.workspace = true

@@ -1,7 +1,7 @@
-//! # veil-net
+//! # aegis-net
 //!
-//! Transport to the Veil relay over WebSocket, carrying opaque
-//! [`veil_core::RelayEnvelope`]s. The client never sends plaintext.
+//! Transport to the Aegis relay over WebSocket, carrying opaque
+//! [`aegis_core::RelayEnvelope`]s. The client never sends plaintext.
 
 #![forbid(unsafe_code)]
 

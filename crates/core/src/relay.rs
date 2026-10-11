@@ -41,8 +41,8 @@ impl RelayEnvelope {
         }
     }
 
-    pub fn ciphertext(&self) -> Result<Vec<u8>, veil_crypto::CryptoError> {
+    pub fn ciphertext(&self) -> Result<Vec<u8>, aegis_crypto::CryptoError> {
         B64.decode(&self.payload)
-            .map_err(|e| veil_crypto::CryptoError::Encoding(e.to_string()))
+            .map_err(|e| aegis_crypto::CryptoError::Encoding(e.to_string()))
     }
 }

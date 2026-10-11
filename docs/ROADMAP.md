@@ -11,7 +11,7 @@
 ## Immediate next steps
 
 1. **Protocol libraries**: integrate `libsignal-client` (or equivalent) for 1:1; evaluate `openmls` for groups.
-2. **Flutter bridge**: run `flutter_rust_bridge_codegen` to generate Dart bindings for `veil-ffi`.
+2. **Flutter bridge**: run `flutter_rust_bridge_codegen` to generate Dart bindings for `aegis-ffi`.
 3. **Mobile UI**: build minimal chat list + conversation + QR scanner.
 4. **Relay hardening**: TLS, rate limiting, message expiry/pruning, persistence (Postgres/ScyllaDB).
 5. **Keystore integration**: platform-specific (Android Keystore, iOS Keychain) for master keys.

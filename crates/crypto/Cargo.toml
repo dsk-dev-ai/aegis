@@ -1,11 +1,11 @@
 [package]
-name = "veil-crypto"
+name = "aegis-crypto"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-description = "Cryptographic primitives and identity/key management for Veil"
+description = "Cryptographic primitives and identity/key management for Aegis"
 
 [dependencies]
 ed25519-dalek.workspace = true

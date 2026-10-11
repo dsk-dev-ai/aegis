@@ -1,4 +1,4 @@
-# Veil Architecture
+# Aegis Architecture
 
 ## Goals
 
@@ -12,29 +12,29 @@
 ```text
 +-------------------------------+     +-----------------------------+
 |          Clients             |     |           Relay            |
-|  Flutter (Android/iOS)       |     |   veil-server (axum, WS)   |
+|  Flutter (Android/iOS)       |     |   aegis-server (axum, WS)   |
 |  Flutter (Windows/macOS/Lin) |<--->|   opaque store-and-forward |
 +-------------------------------+     +-----------------------------+
                 ^                            | (push: APNs/FCM)
                 |                            v
-           Rust FFI (veil-ffi)            push providers
-           (veil-crypto/core/storage/net)
+           Rust FFI (aegis-ffi)            push providers
+           (aegis-crypto/core/storage/net)
 ```
 
 ## Crate responsibilities
 
 | Crate | Purpose |
 |---|---|
-| `veil-crypto` | Primitives: ed25519/x25519, ChaCha20-Poly1305, HKDF, safety numbers, QR payloads. No network I/O. `#![forbid(unsafe_code)]`. |
-| `veil-core` | Protocol types (AccountId, Endpoint, ConversationId, messages, RelayEnvelope) and seams: `Session` (1:1) and `GroupSession` (MLS). |
-| `veil-net` | WebSocket transport client to the relay. No TLS in core crate (can be layered). |
-| `veil-storage` | Encrypted local KV using `redb`. All writes encrypted with AEAD under the master key. |
-| `veil-ffi` | Stable API surface exposed to Flutter. Zero-unsafe, small surface, testable standalone. |
-| `veil-server` | Minimal store-and-forward relay. Stores only opaque envelopes; never sees plaintext. |
+| `aegis-crypto` | Primitives: ed25519/x25519, ChaCha20-Poly1305, HKDF, safety numbers, QR payloads. No network I/O. `#![forbid(unsafe_code)]`. |
+| `aegis-core` | Protocol types (AccountId, Endpoint, ConversationId, messages, RelayEnvelope) and seams: `Session` (1:1) and `GroupSession` (MLS). |
+| `aegis-net` | WebSocket transport client to the relay. No TLS in core crate (can be layered). |
+| `aegis-storage` | Encrypted local KV using `redb`. All writes encrypted with AEAD under the master key. |
+| `aegis-ffi` | Stable API surface exposed to Flutter. Zero-unsafe, small surface, testable standalone. |
+| `aegis-server` | Minimal store-and-forward relay. Stores only opaque envelopes; never sees plaintext. |
 
 ## Protocol plan
 
-- **1:1**: Signal Protocol — X3DH for initial handshake, Double Ratchet for continuous forward secrecy and post-compromise security. Concrete implementation via a vetted library (`libsignal-client`) later, accessed through `veil-core`'s `Session` trait.
+- **1:1**: Signal Protocol — X3DH for initial handshake, Double Ratchet for continuous forward secrecy and post-compromise security. Concrete implementation via a vetted library (`libsignal-client`) later, accessed through `aegis-core`'s `Session` trait.
 - **Groups**: MLS (RFC 9420). Epoch-based group keys with efficient updates. Prefer `openmls` with careful credential/identity binding.
 - **Identity verification**: safety numbers + QR to compare fingerprints.
 - **Multi-device**: device linking QR + E2EE key transfer.
@@ -51,9 +51,9 @@
 
 ## Data flow (1:1, high level)
 
-1. Peer scanned `veil://add` QR → decode prekey bundle.
+1. Peer scanned `aegis://add` QR → decode prekey bundle.
 2. Client initiates session (X3DH) → generates ciphertext.
-3. Wrap in `RelayEnvelope(to, payload=E2EE, ttl_secs=...)` → send via `veil-net` to relay.
+3. Wrap in `RelayEnvelope(to, payload=E2EE, ttl_secs=...)` → send via `aegis-net` to relay.
 4. Relay stores until recipient connects (or TTL expires).
 5. Recipient decrypts with established Double Ratchet session.
 6. Delivery/read receipts encrypted same way.

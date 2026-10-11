@@ -13,6 +13,95 @@ dependencies = [
 ]
 
 [[package]]
+name = "aegis-core"
+version = "0.1.0"
+dependencies = [
+ "aegis-crypto",
+ "base64",
+ "rand",
+ "rand_core",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "uuid",
+]
+
+[[package]]
+name = "aegis-crypto"
+version = "0.1.0"
+dependencies = [
+ "base64",
+ "chacha20poly1305",
+ "ed25519-dalek",
+ "hex",
+ "hkdf",
+ "hmac",
+ "rand",
+ "rand_core",
+ "serde",
+ "serde_json",
+ "sha2",
+ "subtle",
+ "thiserror 2.0.21",
+ "x25519-dalek",
+ "zeroize",
+]
+
+[[package]]
+name = "aegis-ffi"
+version = "0.1.0"
+dependencies = [
+ "aegis-core",
+ "aegis-crypto",
+ "aegis-storage",
+ "base64",
+ "rand",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+]
+
+[[package]]
+name = "aegis-net"
+version = "0.1.0"
+dependencies = [
+ "aegis-core",
+ "futures-util",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
+name = "aegis-server"
+version = "0.1.0"
+dependencies = [
+ "aegis-core",
+ "anyhow",
+ "axum",
+ "dashmap",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "aegis-storage"
+version = "0.1.0"
+dependencies = [
+ "aegis-crypto",
+ "rand",
+ "redb",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1213,95 +1302,6 @@ name = "valuable"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
-
-[[package]]
-name = "veil-core"
-version = "0.1.0"
-dependencies = [
- "base64",
- "rand",
- "rand_core",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "uuid",
- "veil-crypto",
-]
-
-[[package]]
-name = "veil-crypto"
-version = "0.1.0"
-dependencies = [
- "base64",
- "chacha20poly1305",
- "ed25519-dalek",
- "hex",
- "hkdf",
- "hmac",
- "rand",
- "rand_core",
- "serde",
- "serde_json",
- "sha2",
- "subtle",
- "thiserror 2.0.21",
- "x25519-dalek",
- "zeroize",
-]
-
-[[package]]
-name = "veil-ffi"
-version = "0.1.0"
-dependencies = [
- "base64",
- "rand",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "veil-core",
- "veil-crypto",
- "veil-storage",
-]
-
-[[package]]
-name = "veil-net"
-version = "0.1.0"
-dependencies = [
- "futures-util",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "tokio",
- "tokio-tungstenite",
- "veil-core",
-]
-
-[[package]]
-name = "veil-server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "dashmap",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "veil-core",
-]
-
-[[package]]
-name = "veil-storage"
-version = "0.1.0"
-dependencies = [
- "rand",
- "redb",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "veil-crypto",
-]
 
 [[package]]
 name = "version_check"

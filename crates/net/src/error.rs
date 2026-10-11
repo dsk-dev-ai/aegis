@@ -9,7 +9,7 @@ pub enum NetError {
     #[error("protocol error: {0}")]
     Protocol(String),
     #[error("core error: {0}")]
-    Core(#[from] veil_core::CoreError),
+    Core(#[from] aegis_core::CoreError),
 }
 
 pub type Result<T> = std::result::Result<T, NetError>;

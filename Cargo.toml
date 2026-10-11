@@ -21,16 +21,16 @@ default-members = [
 version = "0.1.0"
 edition = "2021"
 license = "AGPL-3.0-or-later"
-repository = "https://github.com/your-org/veil"
+repository = "https://github.com/your-org/aegis"
 rust-version = "1.75"
-authors = ["Veil Contributors"]
+authors = ["Aegis Contributors"]
 
 [workspace.dependencies]
 # --- internal crates ---
-veil-crypto = { path = "crates/crypto" }
-veil-core = { path = "crates/core" }
-veil-net = { path = "crates/net" }
-veil-storage = { path = "crates/storage" }
+aegis-crypto = { path = "crates/crypto" }
+aegis-core = { path = "crates/core" }
+aegis-net = { path = "crates/net" }
+aegis-storage = { path = "crates/storage" }
 
 # --- cryptography (pure Rust, no C toolchain required) ---
 ed25519-dalek = { version = "2", features = ["rand_core"] }

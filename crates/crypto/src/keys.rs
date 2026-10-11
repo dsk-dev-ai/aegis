@@ -1,6 +1,6 @@
 //! Identity and key-agreement key material.
 //!
-//! Veil uses two long-term key pairs per device:
+//! Aegis uses two long-term key pairs per device:
 //! * an **identity key** (Ed25519) used to sign and authenticate,
 //! * an **exchange key** (X25519) used for Diffie-Hellman key agreement.
 //!
@@ -157,7 +157,7 @@ pub fn safety_number(a: &IdentityPublicKey, b: &IdentityPublicKey) -> String {
     };
 
     let mut seed = Vec::with_capacity(64 + 32);
-    seed.extend_from_slice(b"veil-safety-number-v1");
+    seed.extend_from_slice(b"aegis-safety-number-v1");
     seed.extend_from_slice(&x);
     seed.extend_from_slice(&y);
 

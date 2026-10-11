@@ -3,7 +3,7 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum CoreError {
     #[error(transparent)]
-    Crypto(#[from] veil_crypto::CryptoError),
+    Crypto(#[from] aegis_crypto::CryptoError),
     #[error("session not established for peer {0}")]
     NoSession(String),
     #[error("group error: {0}")]

@@ -4,13 +4,13 @@
 //! surfaced through `flutter_rust_bridge` (see `flutter_rust_bridge.yaml`)
 //! without changes. Keep this surface small and well-documented.
 
-use base64::Engine;
-use veil_core::{DeviceId, Username};
-use veil_crypto::{
+use aegis_core::{DeviceId, Username};
+use aegis_crypto::{
     decode_prekey_bundle, encode_prekey_bundle, safety_number, ExchangeKeyPair, IdentityKeyPair,
     IdentityPublicKey, PreKeyBundle,
 };
-use veil_storage::EncryptedStore;
+use aegis_storage::EncryptedStore;
+use base64::Engine;
 
 use crate::error::{FfiError, Result};
 
@@ -47,7 +47,7 @@ impl Account {
         self.identity.public().to_base64()
     }
 
-    /// Build a `veil://add?...` URI to render as a QR code for adding this
+    /// Build a `aegis://add?...` URI to render as a QR code for adding this
     /// account as a contact.
     pub fn contact_qr_uri(&self) -> Result<String> {
         let bundle = PreKeyBundle {
@@ -78,7 +78,7 @@ impl Account {
         Ok(safety_number(&self.identity.public(), &peer))
     }
 
-    /// Validate a username against Veil's rules.
+    /// Validate a username against Aegis's rules.
     pub fn validate_username(raw: &str) -> Result<String> {
         Ok(Username::parse(raw)?.as_str().to_string())
     }
@@ -99,7 +99,7 @@ pub struct Vault {
 
 impl Vault {
     pub fn open(path: &str, master_key: [u8; 32]) -> Result<Self> {
-        let key = veil_crypto::AeadKey::from_bytes(master_key);
+        let key = aegis_crypto::AeadKey::from_bytes(master_key);
         Ok(Self {
             store: EncryptedStore::open(path, key)?,
         })

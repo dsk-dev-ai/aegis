@@ -25,7 +25,7 @@ Canonical fingerprint derived from both identity keys: HMAC/SHA256 over the pair
 
 ## QR payload
 
-`veil://add?d=` followed by URL-safe base64 of compact JSON:
+`aegis://add?d=` followed by URL-safe base64 of compact JSON:
 ```json
 {
   "identity_key": "<b64>",
@@ -42,7 +42,7 @@ Scanning initiates session setup; verification still requires safety number chec
 - **Initial handshake**: X3DH (triple DH). Bundles include signed prekeys for offline peers.
 - **Ongoing**: Double Ratchet — root + sending/receiving chains, message keys per message, forward secrecy + post-compromise security.
 
-Implementation: use a vetted library (e.g., [`libsignal-client`](https://github.com/signalapp/libsignal)) via FFI or re-export its types; `veil-core` provides the `Session` trait seam to keep it swappable.
+Implementation: use a vetted library (e.g., [`libsignal-client`](https://github.com/signalapp/libsignal)) via FFI or re-export its types; `aegis-core` provides the `Session` trait seam to keep it swappable.
 
 ## Group sessions
 

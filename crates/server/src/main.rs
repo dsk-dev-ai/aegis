@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 
+use aegis_server::{app, AppState};
 use tracing_subscriber::EnvFilter;
-use veil_server::{app, AppState};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -9,12 +9,12 @@ async fn main() -> anyhow::Result<()> {
         .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
         .init();
 
-    let addr: SocketAddr = std::env::var("VEIL_RELAY_ADDR")
+    let addr: SocketAddr = std::env::var("AEGIS_RELAY_ADDR")
         .unwrap_or_else(|_| "127.0.0.1:8080".to_string())
         .parse()?;
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
-    tracing::info!("veil relay listening on http://{addr}");
+    tracing::info!("aegis relay listening on http://{addr}");
 
     axum::serve(listener, app(AppState::new())).await?;
     Ok(())

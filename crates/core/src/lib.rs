@@ -1,6 +1,6 @@
-//! # veil-core
+//! # aegis-core
 //!
-//! Protocol-level building blocks for Veil: identity, conversations, message
+//! Protocol-level building blocks for Aegis: identity, conversations, message
 //! model, the encrypted relay envelope, and the seams for the 1:1 (X3DH +
 //! Double Ratchet) and group (MLS) session implementations.
 //!

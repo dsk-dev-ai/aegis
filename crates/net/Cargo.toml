@@ -1,14 +1,14 @@
 [package]
-name = "veil-net"
+name = "aegis-net"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-description = "Relay transport client for Veil"
+description = "Relay transport client for Aegis"
 
 [dependencies]
-veil-core.workspace = true
+aegis-core.workspace = true
 tokio.workspace = true
 tokio-tungstenite = { workspace = true, features = ["connect", "handshake"] }
 futures-util.workspace = true

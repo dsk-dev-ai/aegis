@@ -1,4 +1,4 @@
-//! # veil-ffi
+//! # aegis-ffi
 //!
 //! The single, stable API surface that the Flutter apps (mobile and desktop)
 //! link against. It composes the crypto, core, and storage crates into
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn vault_roundtrip() {
-        let dir = std::env::temp_dir().join(format!("veil-ffi-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("aegis-ffi-{}", std::process::id()));
         let _ = std::fs::remove_file(&dir);
         let vault = Vault::open(dir.to_str().unwrap(), [7u8; 32]).unwrap();
         vault.put("session:peer", b"state").unwrap();
