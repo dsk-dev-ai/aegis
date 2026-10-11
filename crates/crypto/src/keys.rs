@@ -127,6 +127,12 @@ impl ExchangeKeyPair {
     pub fn public(&self) -> ExchangePublicKey {
         ExchangePublicKey::from(&self.secret)
     }
+
+    /// Perform X25519 Diffie-Hellman with a peer's public key, returning the
+    /// raw 32-byte shared secret. Feed this through HKDF before use as a key.
+    pub fn diffie_hellman(&self, peer: &ExchangePublicKey) -> [u8; 32] {
+        self.secret.diffie_hellman(peer).to_bytes()
+    }
 }
 
 impl std::fmt::Debug for ExchangeKeyPair {
