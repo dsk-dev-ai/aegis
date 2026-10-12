@@ -1,19 +1,22 @@
 //! # aegis-server
 //!
 //! A deliberately minimal relay. It performs **store-and-forward of opaque
-//! ciphertext** and nothing else:
+//! ciphertext** and routes envelopes between connected clients:
 //!
 //! * it cannot read message contents (payloads are end-to-end encrypted),
 //! * it stores no contact lists or social graph,
-//! * undelivered messages expire after their TTL.
+//! * undelivered messages are held in memory and flushed when the recipient
+//!   connects (or dropped — expiry/TTL is enforced by clients/policy).
 //!
-//! This crate is the seam for a horizontally scalable, self-hostable relay.
+//! ## Wire protocol (over WebSocket)
+//! * Client → Server, first frame: `{"hello": "<routing_token>"}`
+//! * Client → Server, thereafter: `RelayEnvelope` JSON
+//! * Server → Client: `RelayEnvelope` JSON (forwarded or flushed)
 
 #![forbid(unsafe_code)]
 
 use std::sync::Arc;
 
-use aegis_core::RelayEnvelope;
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
@@ -24,13 +27,18 @@ use axum::{
     Router,
 };
 use dashmap::DashMap;
+use futures_util::{SinkExt, StreamExt};
 use serde::Serialize;
+use tokio::sync::mpsc;
+use aegis_core::RelayEnvelope;
 
-/// Shared, in-memory relay state. Replace with a durable, sharded store for
-/// production; the interface should stay the same.
+/// Shared, in-memory relay state.
 #[derive(Clone, Default)]
 pub struct AppState {
+    /// Undelivered envelopes per recipient routing token.
     inboxes: Arc<DashMap<String, Vec<RelayEnvelope>>>,
+    /// Live connections per routing token.
+    peers: Arc<DashMap<String, mpsc::UnboundedSender<String>>>,
 }
 
 impl AppState {
@@ -38,12 +46,32 @@ impl AppState {
         Self::default()
     }
 
-    /// Enqueue an envelope for later delivery.
+    fn register(&self, token: &str, tx: mpsc::UnboundedSender<String>) {
+        self.peers.insert(token.to_string(), tx);
+    }
+
+    fn unregister(&self, token: &str) {
+        self.peers.remove(token);
+    }
+
+    /// Route an envelope to a live peer, or queue it for later.
+    pub fn deliver(&self, envelope: RelayEnvelope) {
+        if let Some(tx) = self.peers.get(&envelope.to) {
+            if let Ok(json) = serde_json::to_string(&envelope) {
+                if tx.send(json).is_ok() {
+                    return;
+                }
+            }
+        }
+        self.enqueue(envelope);
+    }
+
+    /// Queue an envelope for later delivery.
     pub fn enqueue(&self, envelope: RelayEnvelope) {
-        self.inboxes
-            .entry(envelope.to.clone())
-            .or_default()
-            .push(envelope);
+        let mut entry = self.inboxes.entry(envelope.to.clone()).or_default();
+        if entry.len() < 1000 {
+            entry.push(envelope);
+        }
     }
 
     /// Drain all pending envelopes for a recipient.
@@ -57,12 +85,17 @@ impl AppState {
     pub fn pending(&self, recipient: &str) -> usize {
         self.inboxes.get(recipient).map(|v| v.len()).unwrap_or(0)
     }
+
+    pub fn online(&self) -> usize {
+        self.peers.len()
+    }
 }
 
 impl std::fmt::Debug for AppState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("AppState")
             .field("recipients", &self.inboxes.len())
+            .field("peers", &self.peers.len())
             .finish()
     }
 }
@@ -71,6 +104,7 @@ impl std::fmt::Debug for AppState {
 struct Health {
     status: &'static str,
     version: &'static str,
+    peers: usize,
 }
 
 /// Build the relay's HTTP/WebSocket router.
@@ -81,10 +115,11 @@ pub fn app(state: AppState) -> Router {
         .with_state(state)
 }
 
-async fn health() -> Json<Health> {
+async fn health(State(state): State<AppState>) -> Json<Health> {
     Json(Health {
         status: "ok",
         version: env!("CARGO_PKG_VERSION"),
+        peers: state.online(),
     })
 }
 
@@ -92,19 +127,61 @@ async fn ws(ws: WebSocketUpgrade, State(state): State<AppState>) -> impl IntoRes
     ws.on_upgrade(move |socket| handle_socket(socket, state))
 }
 
-async fn handle_socket(mut socket: WebSocket, state: AppState) {
-    while let Some(Ok(msg)) = socket.recv().await {
+async fn handle_socket(socket: WebSocket, state: AppState) {
+    let (mut sink, mut stream) = socket.split();
+
+    // First frame must be the hello handshake carrying a routing token.
+    let token = loop {
+        match stream.next().await {
+            Some(Ok(Message::Text(text))) => {
+                if let Ok(value) = serde_json::from_str::<serde_json::Value>(&text) {
+                    if let Some(token) = value.get("hello").and_then(|v| v.as_str()) {
+                        break token.to_string();
+                    }
+                }
+            }
+            Some(Ok(Message::Close(_))) | Some(Err(_)) | None => return,
+            _ => {}
+        }
+    };
+
+    let (tx, mut rx) = mpsc::unbounded_channel::<String>();
+    state.register(&token, tx);
+    tracing::info!(%token, "peer connected");
+
+    // Flush anything queued while the peer was offline.
+    for envelope in state.drain(&token) {
+        if let Ok(json) = serde_json::to_string(&envelope) {
+            if sink.send(Message::Text(json)).await.is_err() {
+                state.unregister(&token);
+                return;
+            }
+        }
+    }
+
+    // Outbound pump: forwards delivered envelopes to this socket.
+    let send_task = tokio::spawn(async move {
+        while let Some(json) = rx.recv().await {
+            if sink.send(Message::Text(json)).await.is_err() {
+                break;
+            }
+        }
+    });
+
+    // Inbound loop.
+    while let Some(Ok(msg)) = stream.next().await {
         match msg {
             Message::Text(text) => {
                 if let Ok(envelope) = serde_json::from_str::<RelayEnvelope>(&text) {
-                    tracing::debug!(to = %envelope.to, "relay: storing envelope");
-                    state.enqueue(envelope);
-                } else {
-                    tracing::warn!("relay: received malformed envelope");
+                    state.deliver(envelope);
                 }
             }
             Message::Close(_) => break,
             _ => {}
         }
     }
+
+    state.unregister(&token);
+    send_task.abort();
+    tracing::info!(%token, "peer disconnected");
 }
