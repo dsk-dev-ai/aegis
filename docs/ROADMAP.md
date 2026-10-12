@@ -8,12 +8,31 @@
 | 3 (Privacy, 1–3 months) | Sealed sender, usernames/discovery, invite links, push hardening, self-host docs, reproducible builds. | Planned |
 | 4 (Hardening, 2–4 months) | External security audit, fuzzing, formal review of critical paths, post-quantum hybrid, federation/self-host production guides. | Planned |
 
+See also: [REQUIREMENTS.md](REQUIREMENTS.md) (tracked requirements) and
+[WORKFLOW.md](WORKFLOW.md) (branch/PR process).
+
+## v1.0.0 exit criteria
+
+Tracked as requirement IDs in [REQUIREMENTS.md](REQUIREMENTS.md). v1.0.0 ships
+when FR-1..FR-10 and NFR-1..NFR-6, NFR-9 are `done` on Android, iOS and Web.
+
+## Progress notes
+
+- Mobile/web Flutter client with real X25519 + HKDF + ChaCha20-Poly1305 E2EE,
+  QR invites, safety numbers, and relay transport: **working slice shipped**
+  (web verified end-to-end; Android via emulator).
+- Relay routing with offline queue/flush: **done**.
+
 ## Immediate next steps
 
-1. **Protocol libraries**: integrate `libsignal-client` (or equivalent) for 1:1; evaluate `openmls` for groups.
-2. **Flutter bridge**: run `flutter_rust_bridge_codegen` to generate Dart bindings for `aegis-ffi`.
-3. **Mobile UI**: build minimal chat list + conversation + QR scanner.
-4. **Relay hardening**: TLS, rate limiting, message expiry/pruning, persistence (Postgres/ScyllaDB).
-5. **Keystore integration**: platform-specific (Android Keystore, iOS Keychain) for master keys.
-6. **CI/CD**: lint, test, build artifacts, reproducible builds.
-7. **Security audit**: commission before public release.
+1. **Android bring-up**: build + install on the Pixel API 30 emulator; verify
+   messaging emulator ↔ web through the relay.
+2. **Protocol libraries**: integrate `libsignal-client` (or equivalent) for 1:1
+   (X3DH + Double Ratchet); evaluate `openmls` for groups.
+3. **Flutter bridge**: run `flutter_rust_bridge_codegen` to generate Dart
+   bindings for `aegis-ffi` (replace the parallel Dart crypto path).
+4. **Encrypted local storage**: swap `SharedPreferences` for the encrypted store.
+5. **Relay hardening**: TLS, rate limiting, message expiry/pruning, persistence.
+6. **Keystore integration**: platform-specific for master keys.
+7. **Desktop clients**: enable Linux/Windows/macOS builds.
+8. **Security audit**: commission before public release.
