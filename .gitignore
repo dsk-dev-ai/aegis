@@ -38,3 +38,6 @@ apps/**/lib/src/rust/frb_generated*.dart
 
 # Machine-specific Rust build workaround (see .cargo/config.toml)
 /.cargo/config.toml
+
+# Flutter/Dart local tooling
+apps/mobile/devtools_options.yaml

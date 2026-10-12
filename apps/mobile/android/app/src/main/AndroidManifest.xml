@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for the app to reach the Aegis relay. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="mobile"
+        android:label="Aegis"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
